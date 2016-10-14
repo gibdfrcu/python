@@ -44,15 +44,14 @@ RUN set -ex && \
 		\
 	apk del .fetch-deps && \
 	\
-	cd /usr/src/python
-
-RUN ./configure && \
+	cd /usr/src/python && \
+	./configure \
 		--enable-loadable-sqlite-extensions \
-		--enable-shared \
+		--enable-shared && \
 	make -j$(getconf _NPROCESSORS_ONLN) && \
-	make install 
-	
-RUN if [ ! -e /usr/local/bin/pip3 ]; then : && \
+	make install && \
+	\
+	if [ ! -e /usr/local/bin/pip3 ]; then : && \
 		wget -O /tmp/get-pip.py 'https://bootstrap.pypa.io/get-pip.py' && \
 		python3 /tmp/get-pip.py "pip==$PYTHON_PIP_VERSION" && \
 		rm /tmp/get-pip.py \
@@ -77,9 +76,9 @@ RUN if [ ! -e /usr/local/bin/pip3 ]; then : && \
 	)" && \
 	apk add --virtual .python-rundeps $runDeps && \
 	apk del .build-deps && \
-	rm -rf /usr/src/python ~/.cache
-
-RUN cd /usr/local/bin \
+	rm -rf /usr/src/python ~/.cache && \
+	\
+	cd /usr/local/bin && \
 	{ [ -e easy_install ] || ln -s easy_install-* easy_install; } && \
 	ln -s idle3 idle && \
 	ln -s pydoc3 pydoc && \
